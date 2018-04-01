@@ -1,0 +1,60 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0.1//EN">
+<html lang="en">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+	{% block head %}
+	<link rel="stylesheet" href="/blog/static/css/common.css" >
+	<link rel="stylesheet" href="/blog/static/css/screen.css" >
+	<link rel="stylesheet" href="/blog/static/css/highlight.css" >
+	<link rel="stylesheet" href="/blog/static/css/changed.css" >
+	{% endblock %}
+</head>
+
+<body>
+	<!-- header -->
+	<div id="header">
+		<div class="content">
+			<table width="100%" cellspacing="0" cellpadding="0" border="0">
+				<tbody>
+					<tr>
+						<td class="logo" width="120" align="left">Lyncir</td>
+						<td width="auto" align="left">
+							<a href="/blog">Blog</a>
+							<a href="/blog/About">About</a>
+						</td>
+					</tr>
+				</tbody>
+			</table>
+		</div>
+	</div>
+	<!-- end header -->
+
+	<!-- content -->
+	<div id="content">
+		<!-- box -->
+		<div id="box">
+			{% block box %}
+			{% endblock %}
+		</div>
+		<!-- end box -->
+	</div>
+	<!-- end content -->
+	
+	<!-- footer -->
+	<div id="footer">
+		<div class="fc">
+			<table width="100%" cellspacing="0" cellpadding="0" border="0">
+				<tbody>
+					<tr>
+						<td><a href="http://flask.pocoo.org">Flask Powered</a></td>
+						<td><a href="http://www.python.org">Python Powered</a></td>
+						<td><a href="">login</a></td>
+					</tr>
+				</tbody>
+			</table>
+		</div>
+	</div>
+	<!-- end footer -->
+</body>
+
+</html>

@@ -1,0 +1,108 @@
+html {
+	/* Helvetiva/Arial-based sans serif stack */
+	font-family: Frutiger, "Frutiger Linotype", Univers, Calibri, "Gill Sans", "Gill Sans MT", "Myriad Pro", Myriad, "Dejavu Sans Condensed", "Liberation Sans", "Nimbus Sans L", Tahoma, Geneva, "Helvetica Neue", Helvetica, Arial, sans-serif;
+	font-size: 0.85em;
+	line-height: 1.25em;
+	color: #000000;
+	background-color: #e5e5e5;
+}
+
+body {
+	color: #00000;
+	background-color: #e5e5e5;	
+	margin: 0;
+	padding: 0;
+}
+
+div#box {
+	width: 540px;
+	margin: 0px auto;
+	padding: 15px 30px;
+	border: 1px solid #808080;
+	border-radius: 6px;
+	box-shadow: 1px 1px 12px #888888;
+	background-color: #ffffff;
+}
+
+p, ol, ul, li, table {
+	font-size: 1em;
+}
+
+p, h1, h2, h3, h4, h5, h6 {
+	margin: 1.2em 0 0;
+}
+
+input, select, th, tr, td {
+	font-size: 1em;
+}
+
+pre {
+	font-size: 0.9em;
+	font-family: Consolas, "Andale Mono WT", "Andale Mono", "Lucida Console", "Lucida Sans Typewriter", "DejaVu Sans Mono", "Bitstream Vera Sans Mono", "Liberation Mono", "Nimbus Mono L", Monaco, "Courier New", Courier, monospace;
+	background-color: #f8f8f8;
+	padding-left: 0.5em;
+	border-left: 2px solid #44bb44;
+}
+
+code {
+	color: #8b0000;
+}
+
+strong, b {
+	font-weight: bold;
+}
+
+table {
+	margin: 0;
+	padding: 0;
+	width: 99%;
+}
+
+th {
+	font-weight: bold;
+	text-align: center;
+}
+
+tr {
+	text-align: left;
+}
+
+th, tr, td {
+	vertical-align: top;
+}
+
+h1 {
+	font-size: 1.7em;
+	text-shadow: 2px 1px 3px #aaaaaa;
+}
+
+h2 {
+	font-size: 1.4em;
+	text-shadow: 2px 1px 3px #aaaaaa;
+	padding-top: 25px;
+	border-bottom: 2px solid #4a6ab0;
+}
+
+h3 {
+	font-size: 1.2em;
+	text-shadow: 2px 1px 3px #aaaaaa;
+	padding-left: 0.3em;
+	border-left: 10px solid #4a6ab0;
+}
+
+h4 {
+	font-size: 1em;
+	padding-left: 0.3em;
+	border-left: 4px solid #4a6ab0;
+}
+
+h5, h6 {
+	font-size: 1em;
+	font-weight: bold;
+}
+
+h6 {
+	margin-bottom: -1em;
+}
+
+

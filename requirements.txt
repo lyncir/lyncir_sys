@@ -1,0 +1,4 @@
+sanic==0.7.0
+gunicorn==19.7.1
+watchdog==0.8.3
+Werkzeug==0.14.1
