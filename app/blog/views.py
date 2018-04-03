@@ -19,7 +19,7 @@ ALLOWED_EXTENSIONS = set(['txt', 'pdf', 'png', 'jpg', 'jpeg', 'gif', 'mp3'])
 
 # Load the template environment with async support
 template_env = Environment(
-    loader=PackageLoader('app.blog', 'templates'),
+    loader=PackageLoader('app', 'templates'),
     autoescape=select_autoescape(['html']),
     enable_async=True
 )
@@ -36,7 +36,7 @@ async def show_post(request, pagename):
     if os.path.exists(await init_page(pagename)):
         creole_html = await init_page(pagename, action='r')
 
-        rendered_template = await post_template.render_async(creole_html=creole_html)
+        rendered_template = await post_template.render_async(creole_html=creole_html, request=request)
         return response.html(rendered_template)
 
     # page not found
@@ -46,35 +46,43 @@ async def show_post(request, pagename):
 
 @bp.route('/<pagename>/edit', methods=['GET', 'POST'])
 async def edit_post(request, pagename):
-    if request.method == 'POST':
-        text = request.form.get('savetext')[0]
-        await init_page(pagename, action='w', text=text)
-        url = request.app.url_for('blog.show_post', pagename=pagename)
-        return response.redirect(url)
+    if request['session'].get('username'):
+        if request.method == 'POST':
+            text = request.form.get('savetext')
+            await init_page(pagename, action='w', text=text)
+            url = request.app.url_for('blog.show_post', pagename=pagename)
+            return response.redirect(url)
 
-    if not os.path.exists(await init_page(pagename)):
-        await init_page(pagename, action='i')
-    text = await init_page(pagename, action='r')
+        if not os.path.exists(await init_page(pagename)):
+            await init_page(pagename, action='i')
+        text = await init_page(pagename, action='r')
 
-    rendered_template = await edit_post_template.render_async(text=text)
-    return response.html(rendered_template)
+        rendered_template = await edit_post_template.render_async(text=text, request=request)
+        return response.html(rendered_template)
+
+    else:
+        abort(404)
 
 
 @bp.route('/<pagename>/upload', methods=['GET', 'POST'])
 async def upload_file(request, pagename):
-    file_path = UPLOAD_FOLDER.format(pagename=pagename)
-    if request.method == 'POST':
-        upload_file = request.files.get('file')
-        if upload_file and allowed_file(upload_file.name):
-            filename = secure_filename(upload_file.name)
-            async with aiofiles.open(os.path.join(file_path, filename), 'wb') as f:
-                await f.write(upload_file.body)
-            return response.html('upload success!')
-        else:
-            return response.html('upload failed!')
+    if request['session'].get('username'):
+        file_path = UPLOAD_FOLDER.format(pagename=pagename)
+        if request.method == 'POST':
+            upload_file = request.files.get('file')
+            if upload_file and allowed_file(upload_file.name):
+                filename = secure_filename(upload_file.name)
+                async with aiofiles.open(os.path.join(file_path, filename), 'wb') as f:
+                    await f.write(upload_file.body)
+                return response.html('upload success!')
+            else:
+                return response.html('upload failed!')
 
-    rendered_template = await upload_template.render_async()
-    return response.html(rendered_template)
+        rendered_template = await upload_template.render_async(request=request)
+        return response.html(rendered_template)
+
+    else:
+        abort(404)
 
 
 @bp.route('/<pagename>/uploads/<filename>')
@@ -122,6 +130,3 @@ async def init_page(pagename, action='d', text=''):
 
 def allowed_file(filename):
     return '.' in filename and filename.rsplit('.', 1)[1] in ALLOWED_EXTENSIONS
-
-
-bp.static('/static', './app/blog/static')

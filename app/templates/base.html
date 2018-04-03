@@ -3,10 +3,10 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
 	{% block head %}
-	<link rel="stylesheet" href="/blog/static/css/common.css" >
-	<link rel="stylesheet" href="/blog/static/css/screen.css" >
-	<link rel="stylesheet" href="/blog/static/css/highlight.css" >
-	<link rel="stylesheet" href="/blog/static/css/changed.css" >
+	<link rel="stylesheet" href="{{ request.app.url_for('static', filename='css/common.css') }}" >
+	<link rel="stylesheet" href="{{ request.app.url_for('static', filename='css/screen.css') }}" >
+	<link rel="stylesheet" href="{{ request.app.url_for('static', filename='css/highlight.css') }}" >
+	<link rel="stylesheet" href="{{ request.app.url_for('static', filename='css/changed.css') }}" >
 	{% endblock %}
 </head>
 
@@ -48,7 +48,12 @@
 					<tr>
 						<td><a href="http://flask.pocoo.org">Flask Powered</a></td>
 						<td><a href="http://www.python.org">Python Powered</a></td>
-						<td><a href="">login</a></td>
+					{% if request.session.username %}
+						<td>{{ request.session.username }} //
+						<a href="{{ request.app.url_for('user.logout') }}">logout</a></td>
+					{% else %}
+						<td><a href="{{ request.app.url_for('user.login') }}">login</a></td>
+					{% endif %}
 					</tr>
 				</tbody>
 			</table>
