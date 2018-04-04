@@ -5,3 +5,6 @@ Werkzeug==0.14.1
 asyncio-redis==0.14.3
 sanic-session==0.1.5
 Jinja2==2.10
+-e git://github.com/lyncir/python-creole.git#egg=python-creole
+Genshi==0.7
+Pygments==2.2.0

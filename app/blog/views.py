@@ -8,6 +8,8 @@ from sanic.exceptions import abort
 from jinja2 import Environment, PackageLoader, select_autoescape
 from werkzeug import secure_filename
 
+from .utils import creole_parser
+
 
 bp = Blueprint('blog', url_prefix='/blog')
 
@@ -34,7 +36,8 @@ upload_template = template_env.get_template('upload.html')
 @bp.route('/<pagename>')
 async def show_post(request, pagename):
     if os.path.exists(await init_page(pagename)):
-        creole_html = await init_page(pagename, action='r')
+        creole_markup = await init_page(pagename, action='r')
+        creole_html = creole_parser(creole_markup)
 
         rendered_template = await post_template.render_async(creole_html=creole_html, request=request)
         return response.html(rendered_template)
