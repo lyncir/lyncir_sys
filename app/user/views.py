@@ -27,7 +27,7 @@ async def login(request):
         if ((password == request.app.config['PASSWORD']) and
                 (username == request.app.config['USERNAME'])):
             request['session']['username'] = username
-            url = request.app.url_for('test')
+            url = request.app.url_for('index')
             return response.redirect(url)
         else:
             abort(404)
@@ -39,5 +39,5 @@ async def login(request):
 @bp.route('/logout')
 async def logout(request):
     request['session'].pop('username', None)
-    url = request.app.url_for('test')
+    url = request.app.url_for('index')
     return response.redirect(url)
