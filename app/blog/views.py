@@ -33,6 +33,13 @@ edit_post_template = template_env.get_template('editpost.html')
 upload_template = template_env.get_template('upload.html')
 
 
+@bp.route('/')
+async def index(request):
+    pagename = 'FrontPage'
+    url = request.app.url_for('blog.show_post', pagename=pagename)
+    return response.redirect(url)
+
+
 @bp.route('/<pagename>')
 async def show_post(request, pagename):
     if os.path.exists(await init_page(pagename)):

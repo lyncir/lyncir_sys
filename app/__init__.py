@@ -1,6 +1,6 @@
 import asyncio_redis
 from sanic import Sanic
-from sanic.response import json
+from sanic import response
 from sanic_session import RedisSessionInterface
 
 app = Sanic(__name__)
@@ -46,8 +46,9 @@ async def save_session(request, response):
 
 
 @app.route('/')
-async def test(request):
-    return json({'hello': 'world'})
+async def index(request):
+    url = request.app.url_for('blog.index')
+    return response.redirect(url)
 
 
 # register blueprint
