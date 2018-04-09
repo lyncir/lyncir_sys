@@ -36,8 +36,11 @@ upload_template = template_env.get_template('upload.html')
 @bp.route('/')
 async def index(request):
     pagename = 'FrontPage'
-    url = request.app.url_for('blog.show_post', pagename=pagename)
-    return response.redirect(url)
+    creole_markup = await init_page(pagename, action='r')
+    creole_html = creole_parser(creole_markup)
+
+    rendered_template = await post_template.render_async(creole_html=creole_html, request=request)
+    return response.html(rendered_template)
 
 
 @bp.route('/<pagename>')
