@@ -1,7 +1,6 @@
-sanic==0.7.0
+-e git://github.com/channelcat/sanic.git#egg=sanic
 gunicorn==19.7.1
 watchdog==0.8.3
-Werkzeug==0.14.1
 asyncio-redis==0.14.3
 sanic-session==0.1.5
 Jinja2==2.10

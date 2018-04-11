@@ -6,7 +6,6 @@ from sanic import Blueprint
 from sanic import response
 from sanic.exceptions import abort
 from jinja2 import Environment, PackageLoader, select_autoescape
-from werkzeug import secure_filename
 
 from .utils import creole_parser
 
@@ -84,7 +83,7 @@ async def upload_file(request, pagename):
         if request.method == 'POST':
             upload_file = request.files.get('file')
             if upload_file and allowed_file(upload_file.name):
-                filename = secure_filename(upload_file.name)
+                filename = upload_file.name
                 async with aiofiles.open(os.path.join(file_path, filename), 'wb') as f:
                     await f.write(upload_file.body)
                 return response.html('upload success!')
