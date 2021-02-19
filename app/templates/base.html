@@ -51,6 +51,9 @@
 					{% if request.session.username %}
 						<td>{{ request.session.username }} //
 						<a href="{{ request.app.url_for('user.logout') }}">logout</a></td>
+
+						<td><a href="{{ request.url }}/upload">upload</a></td>
+						<td><a href="{{ request.url }}/upload_html">upload_html</a></td>
 					{% else %}
 						<td><a href="{{ request.app.url_for('user.login') }}">login</a></td>
 					{% endif %}

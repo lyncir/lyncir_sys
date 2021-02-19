@@ -110,7 +110,8 @@ async def upload_html(request, pagename):
             upload_file = request.files.get('file')
             if upload_file and allowed_html(upload_file.name):
                 await init_page(pagename, action='w', html=upload_file.body, mime_type="html")
-                return response.html('upload success!')
+                url = request.app.url_for('blog.show_post', pagename=pagename)
+                return response.redirect(url)
             else:
                 return response.html('upload failed!')
 
