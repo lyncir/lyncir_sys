@@ -16,6 +16,7 @@ _basedir = os.path.abspath(os.path.dirname(__file__))
 PAGES_DIR = os.path.join(_basedir, 'pages')
 UPLOAD_FOLDER = os.path.join(PAGES_DIR, '{pagename}/attachments')
 ALLOWED_EXTENSIONS = set(['txt', 'pdf', 'png', 'jpg', 'jpeg', 'gif', 'mp3'])
+ALLOWED_HTML = set(['html', 'htm', 'xhtml'])
 
 
 # Load the template environment with async support
@@ -45,6 +46,11 @@ async def index(request):
 @bp.route('/<pagename>')
 async def show_post(request, pagename):
     if os.path.exists(await init_page(pagename)):
+        # 先读html 再读text
+        html = await init_page(pagename, action='r', mime_type="html")
+        if html:
+            return response.html(html)
+
         creole_markup = await init_page(pagename, action='r')
         creole_html = creole_parser(creole_markup)
 
@@ -97,48 +103,88 @@ async def upload_file(request, pagename):
         abort(404)
 
 
+@bp.route('/<pagename>/upload_html', methods=['GET', 'POST'])
+async def upload_html(request, pagename):
+    if request['session'].get('username'):
+        if request.method == 'POST':
+            upload_file = request.files.get('file')
+            if upload_file and allowed_html(upload_file.name):
+                await init_page(pagename, action='w', html=upload_file.body, mime_type="html")
+                return response.html('upload success!')
+            else:
+                return response.html('upload failed!')
+
+        rendered_template = await upload_template.render_async(request=request)
+        return response.html(rendered_template)
+
+    else:
+        abort(404)
+
+
 @bp.route('/<pagename>/uploads/<filename>')
 async def uploaded_file(request, pagename, filename):
     file_path = UPLOAD_FOLDER.format(pagename=pagename)
     return await response.file_stream(os.path.join(file_path, filename))
 
 
-async def init_page(pagename, action='d', text=''):
+async def init_page(pagename, action='d', text='', html='', mime_type='text'):
     """ Init pages dir stracture
 
     pages
     └──PageName
         ├── attachments
-        └── text
+        ├── text
+        └── html
 
     :param pagename: also title name
     :param action: enums: i: initial r: read text w: write text d: retuen path
     """
     page_path = os.path.join(PAGES_DIR, pagename)
-    # initial pages, include text, and uploads dir attachments
+    # 初始化Page.主要包含attachments,text,html
     if action == 'i':
         if not os.path.exists(page_path):
             os.mkdir(page_path)
+            os.mkdir(os.path.join(page_path, 'attachments'))
+
             async with aiofiles.open(os.path.join(page_path, 'text'), 'a') as f:
                 await f.close()
-            os.mkdir(os.path.join(page_path, 'attachments'))
+
+            async with aiofiles.open(os.path.join(page_path, 'html'), 'a') as f:
+                await f.close()
+
             return True
 
-    # return page path
+    # 返回Page路径
     if action == 'd':
         return page_path
 
-    # read from text
-    if action == 'r':
-        async with aiofiles.open(os.path.join(page_path, 'text')) as f:
-            return await f.read()
+    # 根据类型读取内容
+    if action == 'r' and mime_type in ["text", "html"]:
+        if mime_type == "text":
+            async with aiofiles.open(os.path.join(page_path, 'text')) as f:
+                return await f.read()
+
+        if mime_type == "html":
+            if os.path.exists(os.path.join(page_path, 'html')):
+                async with aiofiles.open(os.path.join(page_path, 'html')) as f:
+                    return await f.read()
 
     # write to text
-    if action == 'w':
-        async with aiofiles.open(os.path.join(page_path, 'text'), 'w') as f:
-            await f.write(text)
-            return True
+    if action == 'w' and mime_type in ["text", "html"]:
+        if mime_type == "text":
+            async with aiofiles.open(os.path.join(page_path, 'text'), 'w') as f:
+                await f.write(text)
+                return True
+
+        if mime_type == "html":
+            async with aiofiles.open(os.path.join(page_path, 'html'), 'wb') as f:
+                await f.write(html)
+                return True
 
 
 def allowed_file(filename):
     return '.' in filename and filename.rsplit('.', 1)[1] in ALLOWED_EXTENSIONS
+
+
+def allowed_html(filename):
+    return '.' in filename and filename.rsplit('.', 1)[1] in ALLOWED_HTML
